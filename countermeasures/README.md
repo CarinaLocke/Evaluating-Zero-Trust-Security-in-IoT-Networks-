@@ -30,3 +30,23 @@ However, device reassignment to VLAN 99 and verification of isolation have not y
 - Test restriction, blocking, and isolation separately.
 - Develop and test an access-restoration procedure.
 - Document results and supporting screenshots.
+
+## 5. Access-Restoration Procedure
+
+Access restoration is the process of allowing a previously restricted or isolated IoT device to regain authorized network access after its security status has been reevaluated. In our Zero-Trust network, access will not be restored automatically just because a device returns to normal behavior.
+
+Before restoring access, the following conditions must be satisfied:
+
+1. **Identity Verification:** The device must be registered and recognized as an approved device within the network.
+2. **Authorization Verification:** The device must have permission to communicate with the requested destination and service.
+3. **Behavior Verification:** The device must demonstrate normal network behavior, and the original suspicious activity or policy violation must be resolved.
+4. **Trust Score Reevaluation:** The device's trust score must be recalculated using the team's approved scoring criteria. The device must meet the required classification threshold for restoration.
+5. **Controlled Restoration and Retesting:** Once all conditions are satisfied, the device may be returned to its authorized network access level. Legitimate communication must be tested to confirm successful restoration, while unauthorized communication must remain blocked.
+
+If any of these conditions are not satisfied, the device will remain restricted or isolated until the issue is resolved.
+
+For our Cisco Packet Tracer implementation, restoration may involve removing a device from the quarantine VLAN, restoring its approved VLAN assignment, or adjusting an ACL according to the team's documented security policy. Any configuration changes must preserve protections for other devices.
+
+All restoration attempts will be recorded in the shared test-results spreadsheet, including the device identity, reason for restriction or isolation, verification results, trust classification, configuration changes, and retest outcomes.
+
+**Implementation Status:** This procedure defines the planned restoration requirements. Actual restoration testing and verification in Cisco Packet Tracer have not yet been completed.
