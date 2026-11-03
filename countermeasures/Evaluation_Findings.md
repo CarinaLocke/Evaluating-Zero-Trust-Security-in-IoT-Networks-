@@ -48,3 +48,22 @@ These response mappings are preliminary and must be reviewed against the team's 
 Bryan's scoring criteria will determine how device behavior and trust classifications influence the selected response. Nephie's authorization rules will establish which devices, destinations, and services are permitted.
 
 Until these details are confirmed, the proposed mappings should not be treated as finalized or fully automated security decisions.
+## 3. Countermeasure Repeatability Evaluation
+
+To evaluate the consistency of the implemented security controls, several network communication experiments were repeated in Cisco Packet Tracer using the same configurations.
+
+**Before ACL Enforcement:** The Rogue Device (`192.168.10.50`) successfully communicated with the IoT Server (`192.168.30.10`) in both the original baseline test and the repeat test. The original test received three out of four successful ping replies, while the recorded repeat test received four out of four. An initial attempt during the repeat session received one out of four replies before a subsequent attempt succeeded completely. This variation may have been caused by network initialization or address resolution, although the exact cause was not verified.
+
+**After ACL Enforcement:** The Rogue Device received zero successful ping replies in both the original and repeated tests, demonstrating consistent blocking of the tested unauthorized ICMP communication.
+
+**Authorized Communication:** The Motion Sensor (`192.168.10.11`) successfully established a TCP connection with the IoT Server (`192.168.30.10`) on port 80. The connection was also observed to succeed during a repeat test, although supporting screenshots from the second run were not saved.
+
+**Quarantine Enforcement:** After the Rogue Device was moved into VLAN 99, both the original and repeated ping tests resulted in zero successful replies. The `QUARANTINE-POLICY` ACL recorded four deny-rule matches during the original test and eight cumulative matches after the retest.
+
+### Evaluation Summary
+
+The results demonstrate that the tested access-control and quarantine mechanisms consistently prevented the specified unauthorized ICMP communication while permitting the tested authorized TCP connection.
+
+However, these findings are limited to the specific devices, traffic types, and configurations evaluated. The experiments do not establish that every unauthorized protocol is blocked, that complete HTTP application transactions succeed, or that automated trust-based responses and alerts are functioning.
+
+Additional testing and integration with the team's finalized trust-scoring and authorization policies will be necessary to evaluate the complete Zero-Trust framework.
