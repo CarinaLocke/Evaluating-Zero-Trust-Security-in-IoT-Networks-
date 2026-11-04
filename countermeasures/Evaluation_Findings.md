@@ -133,3 +133,15 @@ The countermeasures were implemented and evaluated using static ACL configuratio
 Although the experiments demonstrated destination-specific restriction, unauthorized ICMP blocking, quarantine enforcement, and restored gateway connectivity, they did not verify automated trust-score calculations, automated alerts, identity verification, or remediation-based restoration approval.
 
 The restoration procedure simulated administrator authorization rather than implementing an automated Zero-Trust decision process. Additional integration and testing would be necessary to validate these mechanisms.
+
+### 5.1 Week 5: Isolation Verification Across Protected Servers
+
+To further evaluate the effectiveness of VLAN-based isolation, the quarantined Rogue Device (`192.168.99.50`) was tested against the Video Server (`192.168.30.20`) using ICMP ping requests.
+
+The device remained assigned to VLAN 99 through switch port Fa0/4, and the `QUARANTINE-POLICY` ACL remained applied inbound on router subinterface `G0/0.99`. No configuration changes were required.
+
+The Video Server test resulted in 0/4 successful replies (100% packet loss). The router's quarantine ACL also displayed four cumulative matches for the `deny ip any any` rule.
+
+Together with the earlier IoT Server isolation test, these findings demonstrate that the quarantined Rogue Device could not successfully communicate with either protected server using the tested ICMP traffic.
+
+The results support the effectiveness of the configured quarantine controls for these routed communication attempts. However, they do not establish isolation effectiveness for every protocol or all possible destinations.
