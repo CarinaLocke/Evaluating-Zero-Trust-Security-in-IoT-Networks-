@@ -67,3 +67,69 @@ The results demonstrate that the tested access-control and quarantine mechanisms
 However, these findings are limited to the specific devices, traffic types, and configurations evaluated. The experiments do not establish that every unauthorized protocol is blocked, that complete HTTP application transactions succeed, or that automated trust-based responses and alerts are functioning.
 
 Additional testing and integration with the team's finalized trust-scoring and authorization policies will be necessary to evaluate the complete Zero-Trust framework.
+## 4. Week 4: Countermeasure Implementation and Restoration Testing
+
+### 4.1 Restriction Testing
+
+To evaluate least-privilege access restrictions, the Motion Sensor (`192.168.10.11`) attempted to establish a TCP connection on port 80 with the Video Server (`192.168.30.20`), which was not an authorized destination under the existing `IOT-POLICY` ACL.
+
+During simulation, the packet reached R1-Gateway, where the ACL matched the `deny ip any any` rule. The packet was subsequently denied and dropped.
+
+This result was compared with the previously successful TCP connection between the Motion Sensor and its authorized IoT Server (`192.168.30.10`).
+
+Together, these observations demonstrate that the existing ACL permits the tested authorized communication while restricting access to an unauthorized destination.
+
+**Evidence:** `Restriction_MotionSensor_VideoServer_ACL_Deny.png`
+
+### 4.2 Blocking Testing
+
+Blocking effectiveness was evaluated through previously conducted experiments involving the Rogue Device (`192.168.10.50`) and IoT Server (`192.168.30.10`).
+
+Before ACL enforcement, the Rogue Device successfully communicated with the IoT Server. After ACL enforcement, both the original and repeated ICMP tests resulted in zero successful replies out of four attempts.
+
+These findings demonstrate consistent blocking of the tested unauthorized ICMP communication. No additional ACL configuration changes were required during Week 4.
+
+### 4.3 Isolation Testing
+
+Isolation was evaluated by assigning the Rogue Device's switch port (`SW1 Fa0/4`) to quarantine VLAN 99 and configuring the device with IP address `192.168.99.50` and default gateway `192.168.99.1`.
+
+Attempts to reach the IoT Server resulted in zero successful ICMP replies. The router's `QUARANTINE-POLICY` ACL recorded deny-rule matches, increasing from four to eight cumulative matches following repeat testing.
+
+These findings support the effectiveness of the quarantine configuration in blocking the tested routed communication.
+
+### 4.4 Restoration Procedure Testing
+
+A controlled restoration experiment was conducted to evaluate whether a quarantined device could regain network connectivity without automatically receiving unrestricted access to protected resources.
+
+**Initial State:** The Rogue Device was assigned to VLAN 99 with IP address `192.168.99.50` and gateway `192.168.99.1`. A pre-restoration ping to the IoT Server returned zero successful replies.
+
+**Configuration Changes:**
+
+1. Reassigned switch port `SW1 Fa0/4` from VLAN 99 to VLAN 10.
+2. Changed the Rogue Device's IP address from `192.168.99.50` to `192.168.10.50`.
+3. Changed its default gateway from `192.168.99.1` to `192.168.10.1`.
+4. Preserved the existing ACL configurations without modification.
+
+**Post-Restoration Results:**
+
+| Test | Result |
+|---|---|
+| Rogue Device → R1-Gateway (`192.168.10.1`) | 4/4 successful ICMP replies |
+| Rogue Device → IoT Server (`192.168.30.10`) | 0/4 successful ICMP replies |
+
+The results demonstrate that the Rogue Device regained connectivity to its original VLAN 10 gateway while remaining unable to communicate with the IoT Server through the tested ICMP protocol.
+
+This supports the principle that restoring network connectivity does not automatically grant unrestricted access to protected resources.
+
+**Evidence:**
+- `Restoration_Gateway_Ping_Success.png`
+- `Restoration_IoT_Server_Access_Denied.png`
+- `Restoration_Test.pkt`
+
+### 4.5 Limitations
+
+The countermeasures were implemented and evaluated using static ACL configurations and manual VLAN reassignment in Cisco Packet Tracer.
+
+Although the experiments demonstrated destination-specific restriction, unauthorized ICMP blocking, quarantine enforcement, and restored gateway connectivity, they did not verify automated trust-score calculations, automated alerts, identity verification, or remediation-based restoration approval.
+
+The restoration procedure simulated administrator authorization rather than implementing an automated Zero-Trust decision process. Additional integration and testing would be necessary to validate these mechanisms.
