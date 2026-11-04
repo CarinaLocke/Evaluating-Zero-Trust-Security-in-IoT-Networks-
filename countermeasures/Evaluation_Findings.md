@@ -145,3 +145,19 @@ The Video Server test resulted in 0/4 successful replies (100% packet loss). The
 Together with the earlier IoT Server isolation test, these findings demonstrate that the quarantined Rogue Device could not successfully communicate with either protected server using the tested ICMP traffic.
 
 The results support the effectiveness of the configured quarantine controls for these routed communication attempts. However, they do not establish isolation effectiveness for every protocol or all possible destinations.
+
+### 5.2 Week 5: Scenario-Response Integration
+
+The project requires security responses to be applied to three suspicious scenarios: an unknown device requesting access, a known device requesting an unauthorized destination or service, and a known device transitioning from normal to abnormal behavior.
+
+The following table summarizes the response mechanisms already tested and identifies the information still required for complete integration.
+
+| Required Scenario | Response | Current Evidence | Integration Status |
+|---|---|---|---|
+| Unknown device requests access | Block | Rogue Device traffic to the IoT Server was denied after ACL enforcement (0/4 successful ICMP replies). | Network response tested; identity evaluation and trust classification pending. |
+| Known device requests unauthorized destination | Restrict | Motion Sensor traffic to the Video Server was denied by the `IOT-POLICY` ACL. | Network response tested; finalized authorization and classification pending. |
+| Known device changes from normal to abnormal behavior | To be determined from classification and policy | No completed behavioral-transition response test has been documented. | Awaiting scenario observations, classification, and response selection. |
+
+The existing experiments demonstrate that the configured network controls can restrict and block selected communication attempts. However, these responses were evaluated independently of the complete trust-scoring process.
+
+Final integration will require the device authorization decisions, observed trust scores, classifications, and reasons for each response. The response mechanisms will then be evaluated against the team's agreed policies.
