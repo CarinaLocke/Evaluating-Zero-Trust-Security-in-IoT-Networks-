@@ -2,7 +2,7 @@
 
 **Project:** Evaluating Zero-Trust Security in IoT Networks  
 **Contributor:** Maria  
-**Status:** Preliminary definitions — implementation testing in progress
+**Status:** Response mechanisms tested; integrated trust-based enforcement and restoration approval pending.
 
 ## 1. Restriction
 
@@ -20,16 +20,18 @@ Isolation involves separating suspicious or untrusted devices from protected net
 
 The `QUARANTINE-POLICY` ACL is configured inbound on router subinterface `GigabitEthernet0/0.99` and contains a `deny ip any any` rule. This is intended to prevent devices assigned to the quarantine VLAN from sending IP traffic through the router.
 
-However, device reassignment to VLAN 99 and verification of isolation have not yet been tested. Communication within the same VLAN may require additional controls.
+Isolation was tested by manually assigning the Rogue Device to VLAN 99 through switch port Fa0/4 and configuring its IP address as 192.168.99.50. ICMP tests to the IoT Server (192.168.30.10) and Video Server (192.168.30.20) both resulted in 0/4 successful replies (100% packet loss). The router's QUARANTINE-POLICY ACL also recorded deny-rule matches.
+
+These results demonstrate that the configured isolation mechanism prevented the tested routed ICMP communication with both protected servers. However, other protocols and communication within the same VLAN were not evaluated.
 
 ## 4. Next Steps
 
-- Confirm trust-scoring classifications and thresholds with Bryan.
-- Confirm authorized destinations and services with Nephie.
-- Test legitimate communication after ACL enforcement.
-- Test restriction, blocking, and isolation separately.
-- Develop and test an access-restoration procedure.
-- Document results and supporting screenshots.
+- Integrate Bryan's finalized trust-scoring rules, classifications, and supporting observations.
+- Integrate Nephie's device inventory, identity checks, and authorization rules.
+- Apply the agreed responses to all three required suspicious scenarios.
+- Verify the full evaluation-to-response process using manual scoring and enforcement.
+- Test restoration after the required identity, authorization, behavior, and trust-score checks have been satisfied.
+- Conduct formal before-and-after experiments and document response effectiveness, legitimate communication, and limitations.
 
 ## 5. Access-Restoration Procedure
 
@@ -49,4 +51,6 @@ For our Cisco Packet Tracer implementation, restoration may involve removing a d
 
 All restoration attempts will be recorded in the shared test-results spreadsheet, including the device identity, reason for restriction or isolation, verification results, trust classification, configuration changes, and retest outcomes.
 
-**Implementation Status:** This procedure defines the planned restoration requirements. Actual restoration testing and verification in Cisco Packet Tracer have not yet been completed.
+**Implementation Status:** The technical restoration procedure was tested in Cisco Packet Tracer by manually moving the Rogue Device from VLAN 99 back to VLAN 10 and restoring its original IP configuration. After restoration, the device successfully communicated with the VLAN 10 gateway (192.168.10.1), receiving 4/4 ping replies, while communication with the IoT Server (192.168.30.10) remained blocked, receiving 0/4 replies.
+
+This experiment demonstrated that network connectivity could be partially restored without removing existing access restrictions. However, the restoration was performed as a simulated administrative action. Identity verification, authorization approval, behavior reassessment, and trust-score reevaluation were not independently validated before restoration. Full restoration approval testing remains pending integration with the team's finalized policies.
